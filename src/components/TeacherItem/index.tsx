@@ -4,26 +4,39 @@ import './styles.css'
 
 import whatsappIcon from '../../assets/images/icons/whatsapp.svg'
 
-const TeacherItem = () => (  
+export interface IProffyProps {
+  avatar: string;
+  name: string;
+  discipline: string;
+  description: string;
+  extraDescription?: string;
+  priceHour: number;
+}
+
+const TeacherItem: React.FC<IProffyProps> = (props) => (  
   <article className="teacher-item">
   <header>
-    <img src="https://avatars1.githubusercontent.com/u/42413502?s=460&u=cee472dd5088f65eb7172587647012fb80817c6b&v=4" alt="Marlos Augusto"/>
+    <img src={props.avatar} alt={props.name}/>
     <div>
-      <strong>Marlos Augusto</strong>
+      <strong>{props.name}</strong>
       <span>NodeJS</span>
     </div>
   </header>
 
   <p>
-    Se hoje é o dia das crianças... 
-    <br /><br />
-    A população ela precisa da Zona Franca de Manaus, porque na Zona franca de Manaus, não é uma zona de exportação, é uma zona para o Brasil. Portanto ela tem um objetivo, ela evita o desmatamento, que é altamente lucravito. Derrubar arvores da natureza é muito lucrativo!
+    {props.description}
+    {props.extraDescription && (
+      <>
+        <br /><br />
+        {props.extraDescription}
+      </>
+    )}
   </p>
 
   <footer>
     <p>
       Preço/hora
-      <strong>R$ 50,00</strong>
+      <strong>R$ {(props.priceHour.toFixed(2).replace('.',','))}</strong>
     </p>
     <button type="button">
       <img src={whatsappIcon} alt="whatsapp icon"/>
