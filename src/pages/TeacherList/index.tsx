@@ -1,47 +1,83 @@
-import React from 'react'
+import React, { useState, FormEvent } from 'react'
 
 import PageHeader from '../../components/PageHeader'
 import Input from '../../components/Input'
 import TeacherItem, { IProffyProps } from '../../components/TeacherItem'
+import Select from '../../components/Select'
+
+import api from '../../services/api'
 
 import './styles.css'
 
-// interface IProffysProps {
-//   proffys: IProffyProps[]
-// }
-
 const TeacherList = () => {
-  const proffysMock:IProffyProps[] = [
-    {    
-      avatar: 'https://avatars1.githubusercontent.com/u/42413502?s=460&u=cee472dd5088f65eb7172587647012fb80817c6b&v=4',
-      name: 'Marlos Augusto',
-      discipline: 'NodeJS',
-      description: 'Se hoje é o dia das crianças...',
-      extraDescription: 'A população ela precisa da Zona Franca de Manaus, porque na Zona franca de Manaus, não é uma zona de exportação, é uma zona para o Brasil. Portanto ela tem um objetivo, ela evita o desmatamento, que é altamente lucravito. Derrubar arvores da natureza é muito lucrativo!',
-      priceHour: 50
-    },
-    {    
-      avatar: 'https://avatars1.githubusercontent.com/u/42413502?s=460&u=cee472dd5088f65eb7172587647012fb80817c6b&v=4',
-      name: 'Marlos Augusto',
-      discipline: 'NodeJS',
-      description: 'A população ela precisa da Zona Franca de Manaus, porque na Zona franca de Manaus, não é uma zona de exportação...',
-      priceHour: 88.9
-    }
-  ]
+  const [proffys, setProffys] = useState<IProffyProps[]>([])
+  const [subject, setSubject] = useState('')
+  const [week_day, setWeekDay] = useState('')
+  const [time, setTime] = useState('')
+
+  const searchTeachers = async (e: FormEvent) => {
+    e.preventDefault()
+    const { data } = await api.get('classes', {
+      params: {
+        subject,
+        week_day,
+        time
+      }
+    })
+    setProffys(data)
+  }
 
   return (
     <div id="page-teacher-list" className="container">
       <PageHeader title="Estes são os proffys disponíveis.">
-        <form action="" id="search-teachers">
-          <Input name="subject" label="Matéria" />
-          <Input name="week_day" label="Dia da semana" />
-          <Input type="time" name="time" label="Hora" />
+        <form onSubmit={searchTeachers} id="search-teachers">
+          <Select
+            name="subject"
+            label="Matéria"
+            value={subject}
+            onChange={e => setSubject(e.target.value)}
+            options={[
+              { value: 'Artes', label: 'Artes' },
+              { value: 'Biologia', label: 'Biologia' },
+              { value: 'Ciências', label: 'Ciências' },
+              { value: 'Educação física', label: 'Educação física' },
+              { value: 'Geografia', label: 'Geografia' },
+              { value: 'História', label: 'História' },
+              { value: 'Matemática', label: 'Matemática' },
+              { value: 'Português', label: 'Português' },
+              { value: 'Química', label: 'Química' }
+            ]}
+          />
+          <Select
+            name="week_day"
+            label="Dia da semana"
+            value={week_day}
+            onChange={e => setWeekDay(e.target.value)}
+            options={[
+              { value: '0', label: 'Domingo' },
+              { value: '1', label: 'Segunda-feira' },
+              { value: '2', label: 'Terça-feira' },
+              { value: '3', label: 'Quarta-feira' },
+              { value: '4', label: 'Quinta-feira' },
+              { value: '5', label: 'Sexta-feira' },
+              { value: '6', label: 'Sábado' }
+            ]}
+          />
+          <Input
+            type="time"
+            name="time"
+            label="Hora"
+            value={time}
+            onChange={e => setTime(e.target.value)}
+          />
+
+          <button type="submit">Buscar</button>
         </form>
       </PageHeader>
 
       <main>
-        {proffysMock.map((proffy: IProffyProps) => (
-          <TeacherItem {...proffy} />
+        {proffys.map((proffy: IProffyProps, index) => (
+          <TeacherItem key={proffy.id} {...proffy} />
         ))}
       </main>
     </div>
